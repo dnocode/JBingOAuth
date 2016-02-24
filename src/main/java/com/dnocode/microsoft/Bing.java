@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Bing {
 
@@ -18,7 +19,7 @@ public class Bing {
   private final Http http=new Http();
   private final Map<String,BingoToken> cache =new HashMap();
   private static Bing INSTANCE;
-  private final HashMap<String,String> paramsMap=new HashMap<String,String>(){{put("grant_type", oauthGrantType);}};
+  private final ConcurrentHashMap<String,String> paramsMap=new ConcurrentHashMap<String,String>(){{put("grant_type", oauthGrantType);}};
 
   private Bing(String clientId, String clientSecret){
    try {
@@ -29,21 +30,23 @@ public class Bing {
    }
   }
 
-  public static Bing auth(String ... clientIdAndSecretId){
+  public synchronized static Bing auth(String ... clientIdAndSecretId){
    try {
+
+
      return INSTANCE = Optional.ofNullable(INSTANCE).orElseGet(()->new Bing(clientIdAndSecretId[0], clientIdAndSecretId[1]));
    }catch (IndexOutOfBoundsException e){
      System.out.print("remember clientid and secretId");
      return null;
    }
   }
-  public  BingoToken gimmiToken(BingoScope scope){ return gimmiToken(scope.val());}
+  public  BingoToken token(BingoScope scope){ return token(scope.val());}
   /**
    * find or request for token
    * @param scope
    * @return
      */
-  public  BingoToken gimmiToken(String scope){
+  public synchronized BingoToken token(String scope){
     paramsMap.put("scope",scope);
     return findInCache(scope)
            .orElseGet(()->http

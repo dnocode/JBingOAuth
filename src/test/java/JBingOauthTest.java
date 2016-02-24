@@ -17,7 +17,7 @@ public class JBingOauthTest extends TestCase {
 
         BingoToken token=Bing
                 .auth(urClientId,urSecretId)
-                  .gimmiToken(BingoScope.bingTranslator);
+                  .token(BingoScope.bingTranslator);
 
         assertTrue(token.isExpired()==false );
     }
