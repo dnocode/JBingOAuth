@@ -20,6 +20,7 @@ public class Http {
 
   public <T> Optional<T> postAsJson(String url , Map paramsMap,Class<T> clazz) {
 
+      System.out.println("dfdffdf");
       return post(url, paramsMap)
               .map(s ->new Gson().fromJson((String)s,clazz));
   }
@@ -39,14 +40,19 @@ public class Http {
             connection.setRequestProperty( "charset", "utf-8");
             connection.setUseCaches(false);
             connection.setDoOutput(true);
+            connection.setDoInput(true);
             //Send request
             DataOutputStream wr = new DataOutputStream( connection.getOutputStream());
             wr.writeBytes(urlParameters);
             wr.close();
 
             //Get Response
-            InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            BufferedReader rd = Optional.of(connection.getInputStream())
+                    .map(InputStreamReader::new)
+                    .map(BufferedReader::new).get();
+
+
+
             StringBuilder response = new StringBuilder(); // or StringBuffer if not Java 5+
             String line;
             while((line = rd.readLine()) != null) {

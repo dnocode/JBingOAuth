@@ -17,13 +17,15 @@ public class BingoToken  {
     public String accessToken;
     @SerializedName(value = "token_type")
     public String tokenType;
-    @SerializedName(value = "expire_in")
+    @SerializedName(value = "expires_in")
     public Long expireIn;
     Instant created=Instant.now();
     @SerializedName(value = "scope")
     public String scope;
 
 
-    public  boolean isExpired(){ return created.plusSeconds(expireIn).isAfter(Instant.now());}
+    public  boolean isExpired(){
+       return   created.plusSeconds(expireIn).isBefore(Instant.now());
+    }
 
 }
