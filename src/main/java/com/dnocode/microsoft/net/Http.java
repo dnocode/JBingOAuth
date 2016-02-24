@@ -20,7 +20,6 @@ public class Http {
 
   public <T> Optional<T> postAsJson(String url , Map paramsMap,Class<T> clazz) {
 
-      System.out.println("dfdffdf");
       return post(url, paramsMap)
               .map(s ->new Gson().fromJson((String)s,clazz));
   }
