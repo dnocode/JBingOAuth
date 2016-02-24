@@ -9,15 +9,16 @@ import junit.framework.TestCase;
 public class JBingOauthTest extends TestCase {
 
 
-    // test method to add two values
-    public void testAdd(){
+    private final String urClientId="X";
+    private final String urSecretId="Y";
 
+    // test method to add two values
+    public void testClient(){
 
         BingoToken token=Bing
-                .auth("ar-dev","0fKIk+qYwfQPbuIk0rv0nm7aUS+MUI7t2gGQlo1Zko0=")
-                .gimmiToken(BingoScope.bingTranslator);
+                .auth(urClientId,urSecretId)
+                  .gimmiToken(BingoScope.bingTranslator);
 
-
-        assertTrue(true );
+        assertTrue(token.isExpired()==false );
     }
 }
