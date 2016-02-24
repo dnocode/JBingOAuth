@@ -1,8 +1,8 @@
 package com.dnocode.microsoft;
 
+import com.dnocode.jhug.net.Http;
 import com.dnocode.microsoft.domain.BingoScope;
 import com.dnocode.microsoft.domain.BingoToken;
-import com.dnocode.microsoft.net.Http;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
