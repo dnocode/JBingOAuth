@@ -1,6 +1,7 @@
 package com.dnocode.microsoft.net;
 
 import com.dnocode.microsoft.functions.FnMapToString;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -8,19 +9,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * Created by dino on 24/02/16.
  */
 public class Http {
-  private String post(String url,HashMap<String,String> paramsMap){
-        String parametersAsString= Optional.of(paramsMap).map(new FnMapToString()).get();
-        String result= post(url,parametersAsString);
-        return result;
+
+
+  public <T> Optional<T> postAsJson(String url , Map paramsMap,Class<T> clazz) {
+
+      return post(url, paramsMap)
+              .map(s ->new Gson().fromJson((String)s,clazz));
+  }
+
+  public Optional<String> post(String url,Map<String,String> paramsMap){
+        return post(url,Optional.of(paramsMap).map(new FnMapToString()).get());
     }
-   private  String post(String targetURL, String urlParameters) {
+   public  Optional<String> post(String targetURL, String urlParameters) {
         HttpURLConnection connection = null;
         try {
             //Create connection
@@ -47,7 +54,7 @@ public class Http {
                 response.append('\r');
             }
             rd.close();
-            return response.toString();
+            return Optional.of(response.toString());
         } catch (Exception e) {
             e.printStackTrace();
             return null;

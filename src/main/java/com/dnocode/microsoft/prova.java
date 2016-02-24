@@ -1,16 +1,14 @@
-import com.dnocode.microsoft.Bing;
+package com.dnocode.microsoft;
+
 import com.dnocode.microsoft.domain.BingoScope;
 import com.dnocode.microsoft.domain.BingoToken;
-import junit.framework.TestCase;
 
 /**
  * Created by dino on 24/02/16.
  */
-public class JBingOauthTest extends TestCase {
+public class prova {
 
-
-    // test method to add two values
-    public void testAdd(){
+    public static void main (String [] args){
 
 
         BingoToken token=Bing
@@ -18,6 +16,5 @@ public class JBingOauthTest extends TestCase {
                 .gimmiToken(BingoScope.bingTranslator);
 
 
-        assertTrue(true );
     }
 }
