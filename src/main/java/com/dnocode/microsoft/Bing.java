@@ -3,6 +3,7 @@ package com.dnocode.microsoft;
 import com.dnocode.jhug.net.Http;
 import com.dnocode.microsoft.domain.BingoScope;
 import com.dnocode.microsoft.domain.BingoToken;
+import rx.Observable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -33,28 +34,36 @@ public class Bing {
   public synchronized static Bing auth(String ... clientIdAndSecretId){
    try {
 
-
      return INSTANCE = Optional.ofNullable(INSTANCE).orElseGet(()->new Bing(clientIdAndSecretId[0], clientIdAndSecretId[1]));
    }catch (IndexOutOfBoundsException e){
      System.out.print("remember clientid and secretId");
      return null;
    }
   }
-  public  BingoToken token(BingoScope scope){ return token(scope.val());}
+
+  public Observable<BingoToken> token(BingoScope scope){ return token(scope.val());}
   /**
    * find or request for token
    * @param scope
    * @return
      */
-  public synchronized BingoToken token(String scope){
+  public synchronized Observable<BingoToken> token(String scope){
     paramsMap.put("scope",scope);
-    return findInCache(scope)
-           .orElseGet(()->http
-                    .postAsJson(oauthEndPoint, paramsMap, BingoToken.class)
-                    .map(this::putTokenInCache).get());
+    Observable<BingoToken> result = findInCacheAsObservable(scope);
+    return !result.isEmpty().toBlocking().first()?result:result.switchIfEmpty(http
+            .<BingoToken>postAsJson(oauthEndPoint,paramsMap,BingoToken.class)
+            .doOnNext(this::putTokenInCache)
+    );
   }
 
 
+
+  private Observable<BingoToken> findInCacheAsObservable(String scope){
+    return findInCache(scope)
+            .map(Observable::just)
+            .orElse(Observable.empty());
+
+  }
   /**
    * find token in cache
    * and remove it if expired
@@ -69,7 +78,9 @@ public class Bing {
 
 
   private BingoToken putTokenInCache(BingoToken newToken){
-    return cache.compute(newToken.scope, (k, oldtoken)->newToken);
+
+    return cache
+            .compute(newToken.scope, (k, oldtoken)->newToken);
   }
 
 }
