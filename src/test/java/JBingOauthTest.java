@@ -12,8 +12,8 @@ import java.util.Optional;
 public class JBingOauthTest extends TestCase {
 
 
-    private final String urClientId="ar-dev";
-    private final String urSecretId="0fKIk+qYwfQPbuIk0rv0nm7aUS+MUI7t2gGQlo1Zko0=";
+    private final String urClientId="x";
+    private final String urSecretId="y";
 
     // test method to add two values
     public void testClient(){
